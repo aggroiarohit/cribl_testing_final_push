@@ -1,0 +1,47 @@
+{
+  "v3User": {
+    "authProtocol": {
+      "ui:options": {
+        "inline": true,
+        "width": "30%"
+      }
+    },
+    "authKey": {
+      "ui:options": {
+        "inline": true,
+        "width": "70%"
+      }
+    },
+    "privProtocol": {
+      "ui:options": {
+        "inline": true,
+        "width": "30%",
+        "inlineStyle": {
+          "padding": 0
+        },
+        "uiEnumOptions": [
+          { "label": "None", "value": "none" },
+          { "label": "AES128", "value": "aes" },
+          { "label": "AES256b (Blumenthal)", "value": "aes256b" },
+          { "label": "AES256r (Reeder)", "value": "aes256r" }
+        ]
+      }
+    },
+    "privKey": {
+      "ui:options": {
+        "inline": true,
+        "width": "70%"
+      }
+    }
+  },
+  "ui:options": {
+    "groups": {
+      "snmpV3Auth": {
+        "title": "SNMPv3 User",
+        "description": "User information for serializing v3 traps",
+        "collapsed": true,
+        "properties": ["v3User"]
+      }
+    }
+  }
+}

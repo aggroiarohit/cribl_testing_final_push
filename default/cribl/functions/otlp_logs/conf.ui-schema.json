@@ -1,0 +1,23 @@
+{
+  "metadataKeys": {
+    "ui:field": "Tags"
+  },
+  "dropNonLogEvents": {
+    "ui:options": {
+      "labelInline": true,
+      "labelWidth": "150px",
+      "titleInlineStyle": {
+        "text-align": "left"
+      }
+    }
+  },
+  "batchOTLPLogs": {
+    "ui:options": {
+      "labelInline": true,
+      "labelWidth": "150px",
+      "titleInlineStyle": {
+        "text-align": "left"
+      }
+    }
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "aggregations": {
+    "ui:field": "Table",
+    "items": {
+      "metricType": {
+        "ui:options": {
+          "allowClear": false,
+          "uiEnumOptions": [
+            {
+              "value": "automatic",
+              "label": "Automatic",
+              "description": "Use the aggregation function to determine the type of metric being output"
+            },
+            {
+              "value": "counter",
+              "label": "Counter",
+              "description": "The following functions can be aggregated into a counter metric: `avg`, `count`, `distinct_count`, `dc`, `earliest`, `latest`, `first`, `histogram`, `last`, `max`, `min`, `median`, `mode`, `perc`, `per_second`, `rate`, `stdev`, `stdevp`, `sum`, `sumsq`, `summary`, `variance`, `variancep`"
+            },
+            {
+              "value": "distribution",
+              "label": "Distribution",
+              "description": "The following functions can be aggregated into a distribution metric: `avg`, `count`, `distinct_count`, `dc`, `earliest`, `latest`, `first`, `histogram`, `last`, `max`, `min`, `median`, `mode`, `perc`, `per_second`, `rate`, `stdev`, `stdevp`, `sum`, `sumsq`, `summary`, `variance`, `variancep`. Distribution is only supported by Datadog."
+            },
+            {
+              "value": "gauge",
+              "label": "Gauge",
+              "description": "The following functions can be aggregated into a gauge metric: `avg`, `count`, `distinct_count`, `dc`, `earliest`, `latest`, `first`, `histogram`, `last`, `max`, `min`, `median`, `mode`, `perc`, `per_second`, `rate`, `stdev`, `stdevp`, `sum`, `sumsq`, `summary`, `variance`, `variancep`"
+            },
+            {
+              "value": "histogram",
+              "label": "Histogram",
+              "description": "The following functions can be aggregated into a histogram metric: `histogram`"
+            },
+            {
+              "value": "summary",
+              "label": "Summary",
+              "description": "The following functions can be aggregated into a summary metric: `summary`"
+            },
+            {
+              "value": "timer",
+              "label": "Timer",
+              "description": "The following functions can be aggregated into a timer metric: `avg`, `count`, `distinct_count`, `dc`, `earliest`, `latest`, `first`, `histogram`, `last`, `max`, `min`, `median`, `mode`, `perc`, `per_second`, `rate`, `stdev`, `stdevp`, `sum`, `sumsq`, `summary`, `variance`, `variancep`"
+            }
+          ]
+        }
+      },
+      "agg": {
+        "ui:widget": "AggInput",
+        "ui:options": { "columnWidth": "80%" },
+        "ui:placeholder": "Enter an aggregate function"
+      }
+    }
+  },
+  "groupbys": {
+    "ui:field": "Tags",
+    "ui:placeholder": "One or more dimensions (or wildcard expression) to group by. Optional."
+  },
+  "timeWindow": {
+    "ui:options": {
+      "labelInline": true,
+      "width": "200px"
+    }
+  },
+  "flushEventLimit": {
+    "ui:options": { "inline": true, "width": "50%" },
+    "ui:placeholder":"Defaults to unlimited"
+  },
+  "flushMemLimit": {
+    "ui:options": { "inline": true, "width": "50%" },
+    "ui:placeholder":"Defaults to unlimited"
+  },
+  "passthrough": {
+    "ui:options": { "inline": true, "width": "50%" }
+  },
+  "sufficientStatsOnly": {
+    "ui:options": { "inline": true, "width": "50%" }
+  },
+  "preserveGroupBys": {
+    "ui:options": {
+      "inline": true,
+      "width": "50%",
+      "inlineStyle": { "padding": "0" }
+    }
+  },
+  "lagTolerance": {
+    "ui:options": { "inline": true, "width": "50%" },
+    "ui:placeholder":"Defaults to the smaller of Time Window and 1 minute"
+  },
+  "idleTimeLimit": {
+    "ui:options": { "inline": true, "width": "50%" },
+    "ui:placeholder":"Defaults to the smaller of Time Window and 1 minute"
+  },
+  "add": {
+    "ui:field": "Table",
+    "items": {
+      "name": {
+        "ui:options": {
+          "columnWidth": "30%"
+        },
+        "ui:placeholder": "Enter field name"
+      },
+      "value": {
+        "ui:widget": "JsInput",
+        "ui:options": {
+          "columnWidth": "70%"
+        },
+        "ui:placeholder": "Enter value expression"
+      }
+    }
+  },
+  "ui:options": {
+    "groups": {
+      "windowType": {
+        "title": "Time Window Settings",
+        "collapsed": true,
+        "properties": ["cumulative","lagTolerance","idleTimeLimit"]
+      },
+      "modeSettings": {
+        "title": "Output Settings",
+        "collapsed": true,
+        "properties": ["passthrough", "sufficientStatsOnly", "preserveGroupBys", "prefix"]
+      },
+      "advanced": {
+        "title": "Advanced Settings",
+        "collapsed": true,
+        "properties": ["flushEventLimit", "flushMemLimit", "shouldTreatDotsAsLiterals", "flushOnInputClose"]
+      }
+    }
+  }
+}

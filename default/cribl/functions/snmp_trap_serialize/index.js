@@ -1,0 +1,1 @@
+exports.name="SNMP Trap Serialize";exports.version="0.2";exports.group="Formatters";const channelName="func:snmp_trap_serialize";const cLogger=C.util.getLogger(channelName);const serializer=C.internal.getSnmpTrapSerializer(channelName,cLogger);exports.init=e=>{serializer.init(e)};exports.process=e=>serializer.process(e);

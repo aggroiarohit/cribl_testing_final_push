@@ -1,0 +1,1 @@
+exports.name="Search Condition";exports.type="search";exports.category="search";let notificationId;exports.init=i=>{notificationId=i.conf.__notificationId};exports.build=()=>({filter:`/^SEARCH_NOTIFICATION_${notificationId}_/.test(id)`,pipeline:{conf:{functions:[]}}});
