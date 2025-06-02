@@ -34,3 +34,4 @@ ha-version.txt
 *.db-shm
 .nfs*
 ### CUSTOM SECTION -- DO NOT REMOVE ###
+git_push.py
