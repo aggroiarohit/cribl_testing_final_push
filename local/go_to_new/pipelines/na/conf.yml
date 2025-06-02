@@ -11,4 +11,17 @@ functions:
         - disabled: false
           name: ls
           value: _tmp.raw
+  - id: auto_timestamp
+    filter: "true"
+    disabled: null
+    conf:
+      srcField: _raw
+      dstField: _time
+      defaultTimezone: local
+      timeExpression: time.getTime() / 1000
+      offset: 0
+      maxLen: 150
+      defaultTime: now
+      latestDateAllowed: +1week
+      earliestDateAllowed: -420weeks
 description: ""
