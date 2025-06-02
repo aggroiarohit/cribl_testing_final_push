@@ -19,4 +19,12 @@ functions:
         - disabled: false
           name: hi
           value: "{hi:_tmp.raw}"
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: na
+          value: na
 description: ""
