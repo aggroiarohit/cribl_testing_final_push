@@ -10,4 +10,5 @@ functions:
       mode: extract
       type: csv
       srcField: _raw
+      dstField: _tmp
 description: ""
