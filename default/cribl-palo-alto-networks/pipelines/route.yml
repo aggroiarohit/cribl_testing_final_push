@@ -1,0 +1,95 @@
+id: default
+groups: {}
+routes:
+  - id: 5zON3d
+    name: Traffic
+    final: true
+    disabled: false
+    pipeline: pan_traffic
+    description: ""
+    clones: []
+    filter: _raw.indexOf(",TRAFFIC,") > -1
+    output: default
+  - id: bSiAu8
+    name: Threat
+    final: true
+    disabled: false
+    pipeline: pan_threat
+    description: ""
+    clones: []
+    filter: _raw.indexOf(",THREAT,") > -1
+    output: default
+  - id: moPEY8
+    name: System
+    final: true
+    disabled: false
+    pipeline: pan_system
+    description: ""
+    clones: []
+    filter: _raw.indexOf(",SYSTEM,") > -1
+    output: default
+  - id: Ax1zbB
+    name: Config
+    final: true
+    disabled: false
+    pipeline: pan_config
+    description: ""
+    clones: []
+    filter: _raw.indexOf(",CONFIG,") > -1
+    output: default
+  - id: Ekpmod
+    name: HIP Match
+    final: true
+    disabled: false
+    pipeline: pan_hipmatch
+    description: ""
+    clones: []
+    filter: _raw.indexOf(",HIPMATCH,") > -1
+    output: default
+  - id: vycWVl
+    name: User ID
+    final: true
+    disabled: false
+    pipeline: pan_userid
+    description: ""
+    clones: []
+    filter: _raw.indexOf(",USERID,") > -1
+    output: default
+  - id: vhGy6p
+    name: GlobalProtect
+    final: true
+    disabled: false
+    pipeline: pan_globalprotect
+    description: ""
+    clones: []
+    filter: _raw.indexOf(",GLOBALPROTECT,") > -1
+    output: default
+  - id: QGwqXS
+    name: Decryption
+    final: true
+    disabled: false
+    pipeline: pan_decryption
+    description: ""
+    clones: []
+    filter: _raw.indexOf(",DECRYPTION,") > -1
+    output: default
+  - id: Uwyn3m
+    name: Correlation
+    final: true
+    disabled: false
+    pipeline: pan_correlation
+    description: ""
+    clones: []
+    enableOutputExpression: false
+    outputExpression: null
+    filter: _raw.indexOf(",CORRELATION,") > -1
+    output: default
+  - id: default
+    name: default
+    final: true
+    disabled: false
+    pipeline: devnull
+    description: Blackhole unknown log types
+    clones: []
+    filter: "true"
+    output: default
