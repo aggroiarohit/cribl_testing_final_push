@@ -1,0 +1,103 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: >
+        See the README for full details
+
+
+        Drop some events, aggregate others, and allow others through (mostly) unharmed. See README for how to enable the Pack.
+
+
+        First, we'll drop anything with a log level of DEBUG or TRACE. Sometimes they get turned on and flood your internal indexes.
+
+
+        Next, we'll extract the component and the message. A punct field will be created by removing letters, numbers and spaces from the text. We'll use punct and host to aggregate if the component and log level are in the `components_supression.csv` lookup. We've provided some suggested targets. Change as you see fit. Suppressed events will include a ` repeated=#` tag appended to the end, and a window index time field for the timeframe the aggregation happened in. Eg, 30 seconds.
+
+
+        Next, and optionally, the timestamp is trimmed from _raw, source is trimmed, and any reference to the $splunkhome path is reduced to $SPLUNK
+  - id: regex_extract
+    filter: "true"
+    disabled: false
+    conf:
+      source: _raw
+      iterations: 100
+      overwrite: false
+      regex: /^\S+\s\S+\s[-+0-9]+\s(?<__level>\w+)\s+(?<__component>\S+)\s(?<__msg>.*)/
+    description: temp fields, used in later steps
+  - id: drop
+    filter: /(DEBUG|TRACE)/.test(__level)
+    disabled: false
+    conf: {}
+    final: true
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: |-
+        Suppress repeated logs
+        - Create punct field
+        - Suppress based on host, punct, component and level
+        - Add repeated= counter to the end of surviving Suppressed events
+  - id: eval
+    filter: __msg
+    disabled: null
+    conf:
+      add:
+        - name: __punct
+          value: __msg.replace(/[\sa-zA-Z0-9]+/g,"_")
+    description: Use the msg "punct" to identify similar messages (spaces, letters and
+      numbers replaced with _)
+  - id: suppress
+    filter: C.Lookup('components_suppression.csv').match(`${__component}-${__level}`)
+    disabled: false
+    conf:
+      allow: 1
+      suppressPeriodSec: 30
+      dropEventsMode: true
+      maxCacheSize: 50000
+      cacheIdleTimeoutPeriods: 2
+      numEventsIdleTimeoutTrigger: 10000
+      keyExpr: "`${host}-${__punct}-${__component}-${__level}`"
+    description: If the component-level is listed in the suppression lookup
+  - id: eval
+    filter: suppressCount
+    disabled: null
+    conf:
+      add:
+        - name: window
+          value: "30"
+        - name: _raw
+          value: "`${_raw}, repeated=${suppressCount}`"
+      remove:
+        - suppressCount
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: >-
+        [optional] 
+
+        * _time already exists, lose the timestamp in _raw (breaks default field extracts)
+
+        * replace references to $SPLUNKHOME
+
+        * replace source field with './splunkd.log'
+  - id: eval
+    filter: _time
+    disabled: false
+    conf:
+      add:
+        - name: _raw
+          value: _raw.replace(/^\S+\s\S+\s[-+0-9]+ /,'')
+        - name: _raw
+          value: _raw.replace(/\/[a-zA-Z\/]+splunkforwarder\//g,'$SPLUNK/')
+        - name: source
+          value: source.replace(/.*[\\/]/,'./')
+      remove:
+        - suppress
+    description: minor adjustments for much glory
