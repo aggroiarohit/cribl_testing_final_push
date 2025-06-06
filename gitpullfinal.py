@@ -40,6 +40,7 @@ def deploy_to_cloud():
 
     if response.status_code == 200:
         print("🚀 Successfully deployed to Cribl.Cloud.")
+        print(response)
     else:
         print(f"❌ Deployment failed: {response.status_code} > {response.text}")
 
