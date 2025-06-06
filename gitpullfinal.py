@@ -31,18 +31,20 @@ def deploy_to_cloud():
     }
 
     payload = {
-        "path": "/path/to/github",  # Replace with correct Git path if required
+        "path": "/path/to/github",
         "source": "github",
-        "repo": "aggroiarohit/cribl_on_prem_new"  # Make sure this matches Cribl's expected format
+        "repo": "aggroiarohit/cribl_on_prem_new"
     }
 
     response = requests.post(CRIBL_API_URL, headers=headers, json=payload)
+    print(f"Status code: {response.status_code}")
+    print(f"Response text: {response.text}")
 
     if response.status_code == 200:
-        print("🚀 Successfully deployed to Cribl.Cloud.")
-        print(response)
+        print("✅ Successfully deployed to CRIBL Cloud")
     else:
-        print(f"❌ Deployment failed: {response.status_code} > {response.text}")
+        print(f"❌ Deployment failed with status {response.status_code}")
+
 
 def main():
     os.chdir(CRIBL_CONFIG_PATH)
