@@ -1,0 +1,181 @@
+groups:
+  OKWSME:
+    name: Aggregate per_*_thruput to metrics
+    description: use lookup to assign group name, then aggregate by that group
+    disabled: false
+    index: 3
+  RF1qBS:
+    name: Aggregate thruput to metrics
+    description: use lookup to assign group name, then aggregate by that group
+    index: 4
+    disabled: false
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: >
+        Reduce metrics logs from Forwarders. See the README for how to enable
+        this Pack. 
+
+
+        First, we'll drop anything that is not "group=per_*" or "group=thruput name=thruput".
+
+
+        Next, we'll optionally aggregate and metrics-ify the remaining data into 2 bundles BY FARM. One for per_ group and one for the overall thruput. The stats are aggregated by farm as defined in the host_mapping.csv lookup. You can change the pipeline to aggregate by host instead, and drop the farm lookup. You won't get as much reduction, but you'll still get the benefits of converting to metrics. And you can adjust the aggregation time period as desired.
+
+
+        ** YOU MUST DEFINE THE INDEX IN THE AGGREGATION FUNCTIONS IF YOU USE THE AGGREGATIONS **
+
+
+        Next, and optionally, the timestamp and log level info are trimmed from _raw, IFF we have not aggregated.
+
+
+        Finally, and optionally, we trim the source field down to just './metrics.log'. Every little bit helps :-)
+  - id: drop
+    filter: "! (/group=(?:per|thruput name=thruput)/.test(_raw))"
+    disabled: null
+    conf: {}
+    final: true
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "[optional] Aggregate by farm into metrics index"
+  - id: serde
+    filter: /group=per_/.test(_raw)
+    disabled: false
+    conf:
+      mode: extract
+      type: kvp
+      srcField: _raw
+      cleanFields: false
+    groupId: OKWSME
+  - id: lookup
+    filter: group.startsWith('per_')
+    disabled: false
+    conf:
+      matchMode: regex
+      matchType: first
+      reloadPeriodSec: 60
+      addToEvent: false
+      inFields:
+        - eventField: host
+          lookupField: host
+      ignoreCase: false
+      file: host_mapping.csv
+      outFields:
+        - lookupField: grouping
+          eventField: farm
+    groupId: OKWSME
+    description: Lookup farm (pod, env, whatever) for aggregations
+  - id: aggregation
+    filter: farm
+    disabled: false
+    conf:
+      passthrough: false
+      preserveGroupBys: false
+      sufficientStatsOnly: false
+      metricsMode: true
+      timeWindow: 30s
+      aggregations:
+        - max(avg_age).as('uf.thruput.max_age')
+        - sum(ev).as('uf.thruput.ev')
+        - sum(kb).as('uf.thruput.kb')
+      cumulative: false
+      flushOnInputClose: true
+      groupbys:
+        - series
+        - farm
+      add:
+        - name: index
+          value: "'_metrics'"
+        - name: source
+          value: "'metrics:aggs'"
+        - name: sourcetype
+          value: "'metrics:aggs'"
+    groupId: OKWSME
+    final: false
+  - id: serde
+    filter: /group=thruput/.test(_raw)
+    disabled: false
+    conf:
+      mode: extract
+      type: kvp
+      srcField: _raw
+      cleanFields: false
+      dstField: stats
+    groupId: RF1qBS
+  - id: lookup
+    filter: stats.name == 'thruput' && ! __criblMetrics
+    disabled: false
+    conf:
+      matchMode: regex
+      matchType: first
+      reloadPeriodSec: 60
+      addToEvent: false
+      inFields:
+        - eventField: host
+          lookupField: host
+      ignoreCase: false
+      file: host_mapping.csv
+      outFields:
+        - lookupField: grouping
+          eventField: farm
+    groupId: RF1qBS
+    description: Lookup farm (pod, env, whatever) for aggregations
+  - id: aggregation
+    filter: farm && ! __criblMetrics
+    disabled: false
+    conf:
+      passthrough: false
+      preserveGroupBys: false
+      sufficientStatsOnly: false
+      metricsMode: true
+      timeWindow: 30s
+      aggregations:
+        - sum(stats.kb).as('uf.thruput.kb')
+        - sum(stats.ev).as('uf.thruput.ev')
+        - avg(stats.load_average).as('uf.os.load_avg')
+      cumulative: false
+      flushOnInputClose: true
+      groupbys:
+        - farm
+      add:
+        - name: index
+          value: "'_metrics'"
+        - name: source
+          value: "'metrics:aggs'"
+        - name: sourcetype
+          value: "'metrics:aggs'"
+    groupId: RF1qBS
+    final: false
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "[optional] Trim timestamp from _raw logs (only runs if aggregations
+        aren't enabled)"
+  - id: mask
+    filter: "! __criblMetrics"
+    disabled: false
+    conf:
+      rules:
+        - matchRegex: /^.*group=/
+          replaceExpr: "'group='"
+      fields:
+        - _raw
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: "[optional] Trim source to just filename"
+  - id: mask
+    filter: "! __criblMetrics"
+    disabled: false
+    conf:
+      rules:
+        - matchRegex: /.*[\\/]/
+          replaceExpr: "'./'"
+      fields:
+        - source

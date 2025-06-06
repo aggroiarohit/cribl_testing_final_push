@@ -1,0 +1,22 @@
+output: default
+streamtags: []
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: serde
+    filter: "true"
+    disabled: null
+    conf:
+      mode: extract
+      type: csv
+      srcField: _raw
+      dstField: _tmp
+  - id: eval
+    filter: "true"
+    disabled: null
+    conf:
+      add:
+        - disabled: false
+          name: finding_info
+          value: "{notok:_tmp.nono}"
+description: ""
