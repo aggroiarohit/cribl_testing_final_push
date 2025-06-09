@@ -24,3 +24,14 @@ routes:
     filter: "true"
     clones: []
     output: devnull
+  - id: 1kU4CH
+    name: na
+    final: true
+    disabled: false
+    pipeline: cribl_metrics_rollup
+    description: ""
+    enableOutputExpression: false
+    outputExpression: null
+    filter: "true"
+    clones: []
+    output: default
