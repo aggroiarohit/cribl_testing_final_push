@@ -28,7 +28,7 @@ routes:
     name: na
     final: true
     disabled: false
-    pipeline: cribl_metrics_rollup
+    pipeline: pack:cribl-palo-alto-networks
     description: ""
     enableOutputExpression: false
     outputExpression: null
